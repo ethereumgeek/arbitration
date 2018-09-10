@@ -14,8 +14,8 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
     /* Dispute struct for two parties with trusted mediator. */
     struct DisputeStruct {
         address[] parties;
-        uint256 choices;
-        uint256 ruling;
+        uint32 choices;
+        uint32 ruling;
         DisputeStatus status;
         uint256 feeTotal;
         uint256 appealTimeout;

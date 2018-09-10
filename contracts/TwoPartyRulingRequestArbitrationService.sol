@@ -1,7 +1,7 @@
 pragma solidity ^0.4.0;
 import "./ArbitrationService.sol";
 
-contract TwoPartyMediatedArbitrationService is ArbitrationService {
+contract TwoPartyRulingRequestArbitrationService is ArbitrationService {
     /* Contract owner. */
     address public owner = msg.sender;
 
@@ -27,8 +27,11 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
         address trustedMediator;
         bool partyAPaid;
         bool partyBPaid;
+        bool payMediatorAfterSolved;
         uint32 choices;
         uint32 ruling;
+        uint32 partyARequestedRuling;
+        uint32 partyBRequestedRuling;
         DisputeStatus status;
         uint256 feePerParty;
         uint256 timeout;
@@ -143,6 +146,40 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
         }
     }
 
+    /** @dev Withdraw any fees remaining after dispute has ended.
+     *  @param _arbitrated The contract which created the dispute.
+     *  @param _disputeID ID of the dispute.
+     */
+    function withdrawFeeAfterSolved(Arbitrated _arbitrated, uint256 _disputeID) public {
+        DisputeStruct storage dispute = disputesMap[_arbitrated][_disputeID];
+
+        require(
+            dispute.status == DisputeStatus.Solved,
+            "Can only withdraw after dispute is solved."
+        );
+
+        require(
+            (msg.sender == dispute.partyA && dispute.partyAPaid && !dispute.payMediatorAfterSolved) || 
+            (msg.sender == dispute.partyB && dispute.partyBPaid && !dispute.payMediatorAfterSolved) || 
+            (msg.sender == dispute.trustedMediator && dispute.payMediatorAfterSolved),
+            "Must have fee balance to withdraw."
+        );
+        
+        if (msg.sender == dispute.trustedMediator) {
+            /* Transfer arbitration fee to mediator.  Each party pays half of the total arbitration fee. */
+            dispute.payMediatorAfterSolved = false;
+            msg.sender.transfer(dispute.feePerParty * 2);
+        }
+        else if (msg.sender == dispute.partyA) {
+            dispute.partyAPaid = false;
+            msg.sender.transfer(dispute.feePerParty);
+        }
+        else {
+            dispute.partyBPaid = false;
+            msg.sender.transfer(dispute.feePerParty);
+        }
+    }
+
     /** @dev Create a dispute. Must be called by the arbitrable contract.
      *  Must be paid at least upfrontCost().
      *  @param _disputeID ID to track dispute given by the arbitrable contract.
@@ -175,7 +212,10 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
             _parties[2], 
             feePerParty == 0, 
             feePerParty == 0, 
+            false, 
             _choices, 
+            0, 
+            0, 
             0, 
             feePerParty == 0 ? DisputeStatus.Waiting : DisputeStatus.FeesOwed,
             feePerParty,
@@ -214,6 +254,8 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
 
         dispute.ruling = _ruling;
         dispute.status = DisputeStatus.Solved;
+        dispute.partyAPaid = false;
+        dispute.partyBPaid = false;
         
         /* Transfer arbitration fee to mediator.  Each party pays half of the total arbitration fee. */
         msg.sender.transfer(dispute.feePerParty * 2);
@@ -255,6 +297,8 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
 
         dispute.ruling = _ruling;
         dispute.status = DisputeStatus.Solved;
+        dispute.partyAPaid = false;
+        dispute.partyBPaid = false;
 
         /* Refund arbitration fee if there's a timeout. */
         msg.sender.transfer(dispute.feePerParty);
@@ -263,6 +307,60 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
         _arbitrated.rule(_disputeID, _ruling);
 
         emit Ruling(_arbitrated, _disputeID, _ruling, false);
+    }
+
+    /** @dev Request a ruling. UNTRUSTED. 
+     *  @param _arbitrated The contract which created the dispute.
+     *  @param _disputeID ID of the dispute to rule.
+     *  @param _ruling Ruling given by the arbitration contract. Note that 0 means "Not able/wanting to make a decision".
+     */
+    function requestRuling(Arbitrated _arbitrated, uint256 _disputeID, uint32 _ruling) public {
+        DisputeStruct storage dispute = disputesMap[_arbitrated][_disputeID];
+
+        require(
+            _ruling > 0 && _ruling <= dispute.choices, 
+            "Ruling must not be 0 and less than or equal to choices"
+        );
+
+        require(
+            dispute.status != DisputeStatus.Solved,
+            "Can only request ruling if not solved."
+        );
+
+        require(
+            msg.sender == dispute.partyA || msg.sender == dispute.partyB,
+            "Sender must be party A or party B."
+        );
+
+        if (msg.sender == dispute.partyA) {
+            dispute.partyARequestedRuling = _ruling;
+        }
+        else {
+            dispute.partyBRequestedRuling = _ruling;
+        }
+
+        /* If both parties request same ruling then issues that ruling. */
+        if (dispute.partyARequestedRuling == dispute.partyBRequestedRuling) {
+
+            /* Still pay mediator if they still have time to rule. */
+            if (
+                dispute.status == DisputeStatus.Waiting && 
+                block.timestamp <= dispute.timeout &&
+                dispute.partyAPaid &&
+                dispute.partyBPaid
+            ) {
+                dispute.payMediatorAfterSolved = true;
+                dispute.partyAPaid = false;
+                dispute.partyBPaid = false;
+            }
+
+            dispute.ruling = _ruling;
+            dispute.status = DisputeStatus.Solved;
+            
+            /* DANGEROUS external call.  Issue ruling to arbitrated contract. */
+            _arbitrated.rule(_disputeID, _ruling);
+            emit Ruling(_arbitrated, _disputeID, _ruling, false);
+        }
     }
 
     /** @dev Return the status and ruling of a dispute.
