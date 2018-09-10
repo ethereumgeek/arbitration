@@ -17,7 +17,7 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
         uint256 choices;
         uint256 ruling;
         DisputeStatus status;
-        uint256 fee;
+        uint256 feeTotal;
         uint256 appealTimeout;
     }
 
@@ -66,11 +66,6 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
         require(
             _choices >= 2,
             "Must have at least two choices to arbitrate."
-        );
-
-        require(
-            _parties[0] != address(0x0) && _parties[1] != address(0x0) && _parties[2] != address(0x0),
-            "Parties cannot be null or missing."
         );
 
         require(
@@ -157,7 +152,7 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
         dispute.ruling = _ruling;
         dispute.status = DisputeStatus.Solved;
 
-        msg.sender.transfer(dispute.fee);
+        msg.sender.transfer(dispute.feeTotal);
         
         /* DANGEROUS external call.  Issue ruling to arbitrated contract. */
         _arbitrated.rule(_disputeID, _ruling);
@@ -234,7 +229,7 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
             "Must appeal before timeout."
         );
 
-        dispute.fee += msg.value;
+        dispute.feeTotal += msg.value;
         dispute.status == DisputeStatus.Waiting;
     }
 }
