@@ -1,0 +1,437 @@
+{
+  "contractName": "Arbitrated",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_disputeID",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "_evidenceJSON",
+          "type": "string"
+        }
+      ],
+      "name": "ContextEvidence",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_disputeID",
+          "type": "uint256"
+        },
+        {
+          "name": "_ruling",
+          "type": "uint32"
+        }
+      ],
+      "name": "rule",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.4.0;\n\ncontract Arbitrated {\n    /** @dev Should be raised before starting a dispute to provide context.  \n     *  @param _disputeID ID of the dispute.\n     *  @param _evidenceJSON A URI to the evidence JSON file whose name should be its keccak256 hash followed by .json.\n     */\n    event ContextEvidence(uint256 indexed _disputeID, string _evidenceJSON);\n\n    /** @dev Give a ruling for a dispute. Must be called by the arbitration contract.\n     *  @param _disputeID ID of the dispute.\n     *  @param _ruling Ruling given by the arbitration contract. Note that 0 is reserved for \"Not able/wanting to make a decision\".\n     */\n    function rule(uint256 _disputeID, uint32 _ruling) public;\n}",
+  "sourcePath": "/Users/justinhamilton/ethereum/arbitration/contracts/Arbitrated.sol",
+  "ast": {
+    "absolutePath": "/Users/justinhamilton/ethereum/arbitration/contracts/Arbitrated.sol",
+    "exportedSymbols": {
+      "Arbitrated": [
+        41
+      ]
+    },
+    "id": 42,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 27,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 41,
+        "linearizedBaseContracts": [
+          41
+        ],
+        "name": "Arbitrated",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "@dev Should be raised before starting a dispute to provide context.  \n @param _disputeID ID of the dispute.\n @param _evidenceJSON A URI to the evidence JSON file whose name should be its keccak256 hash followed by .json.",
+            "id": 33,
+            "name": "ContextEvidence",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 32,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29,
+                  "indexed": true,
+                  "name": "_disputeID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "324:26:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 28,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "324:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 31,
+                  "indexed": false,
+                  "name": "_evidenceJSON",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "352:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 30,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "352:6:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "323:50:1"
+            },
+            "src": "302:72:1"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Give a ruling for a dispute. Must be called by the arbitration contract.\n @param _disputeID ID of the dispute.\n @param _ruling Ruling given by the arbitration contract. Note that 0 is reserved for \"Not able/wanting to make a decision\".",
+            "id": 40,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "rule",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 38,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 35,
+                  "name": "_disputeID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "665:18:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 34,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "665:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 37,
+                  "name": "_ruling",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "685:14:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint32",
+                    "typeString": "uint32"
+                  },
+                  "typeName": {
+                    "id": 36,
+                    "name": "uint32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "685:6:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint32",
+                      "typeString": "uint32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "664:36:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 39,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "707:0:1"
+            },
+            "scope": 41,
+            "src": "651:57:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 42,
+        "src": "25:685:1"
+      }
+    ],
+    "src": "0:710:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/justinhamilton/ethereum/arbitration/contracts/Arbitrated.sol",
+    "exportedSymbols": {
+      "Arbitrated": [
+        41
+      ]
+    },
+    "id": 42,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 27,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 41,
+        "linearizedBaseContracts": [
+          41
+        ],
+        "name": "Arbitrated",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "@dev Should be raised before starting a dispute to provide context.  \n @param _disputeID ID of the dispute.\n @param _evidenceJSON A URI to the evidence JSON file whose name should be its keccak256 hash followed by .json.",
+            "id": 33,
+            "name": "ContextEvidence",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 32,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29,
+                  "indexed": true,
+                  "name": "_disputeID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "324:26:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 28,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "324:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 31,
+                  "indexed": false,
+                  "name": "_evidenceJSON",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33,
+                  "src": "352:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 30,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "352:6:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "323:50:1"
+            },
+            "src": "302:72:1"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Give a ruling for a dispute. Must be called by the arbitration contract.\n @param _disputeID ID of the dispute.\n @param _ruling Ruling given by the arbitration contract. Note that 0 is reserved for \"Not able/wanting to make a decision\".",
+            "id": 40,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "rule",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 38,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 35,
+                  "name": "_disputeID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "665:18:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 34,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "665:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 37,
+                  "name": "_ruling",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40,
+                  "src": "685:14:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint32",
+                    "typeString": "uint32"
+                  },
+                  "typeName": {
+                    "id": 36,
+                    "name": "uint32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "685:6:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint32",
+                      "typeString": "uint32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "664:36:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 39,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "707:0:1"
+            },
+            "scope": 41,
+            "src": "651:57:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 42,
+        "src": "25:685:1"
+      }
+    ],
+    "src": "0:710:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.0-beta.0",
+  "updatedAt": "2018-09-10T01:51:22.149Z"
+}
