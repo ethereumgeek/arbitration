@@ -8,6 +8,9 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
     /* Default arbitration fee. */
     uint256 private defaultArbitrationFee = 50 finney;
 
+    /* Time to pay fee. */
+    uint256 public timeToPayFee = 7 days;
+
     /* Mapping custom arbitration fee by mediator. */
     mapping(address => uint256) internal customArbitrationFeeMap;
 
@@ -46,6 +49,14 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
     function setDefaultFee(uint256 _fee) public {
         require(msg.sender == owner, "Only owner can call this function."); 
         defaultArbitrationFee = _fee;
+    }
+    
+    /** @dev Set the time to pay arbitration fee. Only callable by the owner.
+     *  @param _time Time to pay arbitration fee after other party.
+     */
+    function setTimeToPayFee(uint256 _time) public {
+        require(msg.sender == owner, "Only owner can call this function."); 
+        timeToPayFee = _time;
     }
 
     /** @dev Set custom arbitration fee for a specific mediator.
@@ -124,7 +135,7 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
             dispute.partyBPaid = true;
         }
 
-        dispute.timeout = block.timestamp;
+        dispute.timeout = block.timestamp + timeToPayFee;
 
         if (dispute.partyAPaid && dispute.partyBPaid) {
             dispute.status = DisputeStatus.Waiting;
