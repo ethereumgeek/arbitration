@@ -6,7 +6,7 @@ contract CentralizedAppealableArbitrationService is AppealableArbitrationService
     address public owner = msg.sender;
 
     /* Arbitration fee. */
-    uint256 private arbitrationFee;
+    uint256 private arbitrationFee = 50 finney;
 
     /* Disputes tracked by this arbitration contract.  Keyed off Arbitrable contract address and dispute ID. */    
     mapping(address => mapping(uint256 => DisputeStruct)) public disputesMap;
