@@ -129,8 +129,12 @@ contract TransactionManager is Arbitrated {
         require(
             (msg.sender == transaction.sender && transaction.status == TransactionStatus.RefundSender) ||
             (msg.sender == transaction.receiver && transaction.status == TransactionStatus.PayReceiver) ||
-            (msg.sender == transaction.receiver && block.timestamp > transaction.lockTimestamp), 
-            "Only participants in transaction can start dispute."
+            (
+                msg.sender == transaction.receiver && 
+                block.timestamp > transaction.lockTimestamp && 
+                transaction.status == TransactionStatus.Pending
+            ), 
+            "Withdraw only allowed after lockTimestamp, or after ruling of dispute."
         );
 
         transaction.status = TransactionStatus.Closed;

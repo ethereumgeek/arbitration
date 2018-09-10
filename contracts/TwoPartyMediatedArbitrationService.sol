@@ -155,6 +155,7 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
             "Parties cannot be null or missing."
         );
         
+        /* Get fee charged by trusted mediator (where _parties[2] is address of mediator). */
         uint256 feePerParty = arbitrationFeePerParty(_parties[2]);
 
         disputesMap[msg.sender][_disputeID] = DisputeStruct(
@@ -244,6 +245,7 @@ contract TwoPartyMediatedArbitrationService is ArbitrationService {
         dispute.ruling = _ruling;
         dispute.status = DisputeStatus.Solved;
 
+        /* Refund arbitration fee if there's a timeout. */
         msg.sender.transfer(dispute.feePerParty);
 
         /* DANGEROUS external call.  Issue ruling to arbitrated contract. */
