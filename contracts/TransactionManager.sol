@@ -1,11 +1,11 @@
 pragma solidity ^0.4.0;
 import "./Arbitrated.sol";
-import "./TwoPartyMediatedArbitrationService.sol";
+import "./ArbitrationService.sol";
 
 contract TransactionManager is Arbitrated {
 
     /* Arbitration contract. */
-    TwoPartyMediatedArbitrationService public arbitrationService = new TwoPartyMediatedArbitrationService();
+    ArbitrationService public arbitrationService;
 
     /* Array of transactions. */
     TransactionData[] public transactionArray;
@@ -26,7 +26,8 @@ contract TransactionManager is Arbitrated {
     }
 
     /* Constructor. */
-    constructor() public {
+    constructor(ArbitrationService _arbitrationService) public {
+        arbitrationService = _arbitrationService;
     }
 
     /* Fallback function. Added so ether sent to this contract is reverted. */
@@ -66,7 +67,7 @@ contract TransactionManager is Arbitrated {
     /** @dev Start dispute regarding transaction.
      *  @param _transactionId ID of the transaction.
      */
-    function disputeTransaction(uint256 _transactionId) public {
+    function disputeTransaction(uint256 _transactionId) public payable {
         TransactionData storage transaction = transactionArray[_transactionId];
 
         require(
@@ -89,7 +90,7 @@ contract TransactionManager is Arbitrated {
 
         uint256[] memory extraData;
         /* DANGEROUS external call.  Create dispute with arbitration. */
-        arbitrationService.createDispute(_transactionId, 2, parties, extraData);
+        arbitrationService.createDispute.value(msg.value)(_transactionId, 2, parties, extraData);
         
         /* Now we can change transaction status to disputed. */
         transaction.status = TransactionStatus.Disputed;
