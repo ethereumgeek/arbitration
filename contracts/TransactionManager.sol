@@ -76,7 +76,8 @@ contract TransactionManager is Arbitrated {
         );
 
         require(
-            transaction.status == TransactionStatus.Pending,
+            transaction.status == TransactionStatus.Pending &&
+            block.timestamp <= transaction.lockTimestamp,
             "Only pending transactions can be disputed"
         );
 
@@ -94,6 +95,27 @@ contract TransactionManager is Arbitrated {
         
         /* Now we can change transaction status to disputed. */
         transaction.status = TransactionStatus.Disputed;
+    }
+
+    /** @dev Finalize transaction early so that receiver can withdraw funds.
+     *  @param _transactionId ID of the transaction.
+     */
+    function finalizeEarly(uint256 _transactionId) public payable {
+        TransactionData storage transaction = transactionArray[_transactionId];
+
+        require(
+            msg.sender == transaction.sender, 
+            "Only sender can finalize."
+        );
+
+        require(
+            transaction.status == TransactionStatus.Pending &&
+            block.timestamp <= transaction.lockTimestamp,
+            "Only pending transactions can be disputed"
+        );
+
+        /* Transaction is now finalized. */
+        transaction.lockTimestamp = block.timestamp - 1;
     }
 
     /** @dev Give a ruling for a dispute. Must be called by the arbitration contract.
